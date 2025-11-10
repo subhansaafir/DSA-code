@@ -1,0 +1,227 @@
+bool isSameTree(binarytree<T>& other, int index1, int index2){
+    if((index1 >= nodes || !status[index1]) && (index2 >= other.nodes || !other.status[index2])){
+        return true;
+    }
+    
+    if((index1 >= nodes || !status[index1]) || (index2 >= other.nodes || !other.status[index2])){
+        return false;
+    }
+    
+    if(data[index1] != other.data[index2]){
+        return false;
+    }
+    
+    return isSameTree(other, 2*index1 + 1, 2*index2 + 1) && 
+           isSameTree(other, 2*index1 + 2, 2*index2 + 2);
+}
+
+
+
+bool isSymmetric(int left, int right){
+    if((left >= nodes || !status[left]) && (right >= nodes || !status[right])){
+        return true;
+    }
+    
+    if((left >= nodes || !status[left]) || (right >= nodes || !status[right])){
+        return false;
+    }
+    
+    if(data[left] != data[right]){
+        return false;
+    }
+    
+    return isSymmetric(2*left + 2, 2*right + 1) && isSymmetric(2*left + 1, 2*right + 2);
+}
+
+
+int findNode(T val, int index){
+    if(index >= nodes || !status[index]){
+        return -1;
+    }
+    
+    if(data[index] == val){
+        return index;
+    }
+    
+    int leftResult = findNode(val, 2*index + 1);
+    if(leftResult != -1) return leftResult;
+    
+    return findNode(val, 2*index + 2);
+}
+
+T findLCA(T val1, T val2){
+    int index1 = findNode(val1, 0);
+    int index2 = findNode(val2, 0);
+    
+    if(index1 == -1 || index2 == -1){
+        cout << "One or both nodes not found!" << endl;
+        return -1;
+    }
+    
+    while(index1 != index2){
+        if(index1 > index2){
+            index1 = (index1 - 1) / 2;
+        }
+        else{
+            index2 = (index2 - 1) / 2;
+        }
+    }
+    
+    cout << "LCA of " << val1 << " and " << val2 << " is: ";
+    return data[index1];
+}
+
+
+// 4. Binary Tree Path Sum - find paths with specific sum
+void findPathSum(int index, int targetSum, int currentSum, string path){
+    if(index >= nodes || !status[index]){
+        return;
+    }
+    
+    currentSum += data[index];
+    path += to_string(data[index]) + " ";
+    
+    int left = 2*index + 1;
+    int right = 2*index + 2;
+    
+    if((left >= nodes || !status[left]) && (right >= nodes || !status[right])){
+        if(currentSum == targetSum){
+            cout << "Path found: " << path << endl;
+        }
+        return;
+    }
+    
+    findPathSum(left, targetSum, currentSum, path);
+    findPathSum(right, targetSum, currentSum, path);
+}
+
+void findPathSum(int targetSum){
+    cout << "Finding all paths with sum " << targetSum << ":" << endl;
+    findPathSum(0, targetSum, 0, "");
+}
+
+// 5. Search Element - find if element exists
+bool searchElement(T val, int index){
+    if(index >= nodes || !status[index]){
+        return false;
+    }
+    
+    if(data[index] == val){
+        return true;
+    }
+    
+    return searchElement(val, 2*index + 1) || searchElement(val, 2*index + 2);
+}
+
+bool searchElement(T val){
+    if(searchElement(val, 0)){
+        cout << "Element " << val << " found in tree!" << endl;
+        return true;
+    }
+    else{
+        cout << "Element " << val << " not found in tree!" << endl;
+        return false;
+    }
+}
+
+// 6. Sum of All Nodes - aggregate operation
+T sumAllNodes(int index){
+    if(index >= nodes || !status[index]){
+        return 0;
+    }
+    
+    return data[index] + sumAllNodes(2*index + 1) + sumAllNodes(2*index + 2);
+}
+
+T sumAllNodes(){
+    T total = sumAllNodes(0);
+    cout << "Sum of all nodes: " << total << endl;
+    return total;
+}
+
+// 7. Check if Tree is Complete - validates array implementation concept
+bool isComplete(){
+    if(nodes == 0) return false;
+    
+    bool nonFullNodeFound = false;
+    
+    for(int i = 0; i < nodes; i++){
+        if(status[i]){
+            int left = 2*i + 1;
+            int right = 2*i + 2;
+            
+            if((left < nodes && status[left]) || (right < nodes && status[right])){
+                if(nonFullNodeFound){
+                    cout << "Tree is not complete!" << endl;
+                    return false;
+                }
+            }
+            else{
+                nonFullNodeFound = true;
+            }
+        }
+        else{
+            nonFullNodeFound = true;
+        }
+    }
+    
+    cout << "Tree is complete!" << endl;
+    return true;
+}
+
+
+
+
+
+
+    // void displayParenthesizedView() {
+    //     cout << "Parenthesized View: ";
+    //     displayParenthesizedView(0);
+    //     cout << endl;
+    // }
+
+    // private:
+    // void displayParenthesizedView(int index) {
+    //     if (index >= nodes || !status[index]) {
+    //         return;
+    //     }
+
+    //     cout << data[index];
+
+    //     int left = 2 * index + 1;
+    //     int right = 2 * index + 2;
+
+    //     if ((left < nodes && status[left]) || (right < nodes && status[right])) {
+    //         cout << " ( ";
+    //         displayParenthesizedView(left);
+    //         cout << " , ";
+    //         displayParenthesizedView(right);
+    //         cout << " ) ";
+    //     }
+    // }
+
+
+        void displayLevel(int levelNo){
+        cout << "Nodes at level " << levelNo << ": ";
+        for(int i = 0; i < nodes; i++){
+            if(status[i] && findLevelOfNode(data[i]) == levelNo){
+                cout << data[i] << " ";
+            }
+        }
+        cout << endl;
+    }
+
+    int findLevelOfNode(T node){
+        for(int i = 0; i < nodes; i++){
+            if(status[i] && data[i] == node){
+                int level = 0;
+                int index = i;
+                while(index > 0){
+                    index = (index - 1) / 2;
+                    level++;
+                }
+                return level;
+            }
+        }
+        return -1; 
+    }  

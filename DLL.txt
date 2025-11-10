@@ -1,0 +1,446 @@
+void removeDuplicates(){
+    if (head == NULL) return;
+    
+    DNode* current = head;
+    
+    do {
+        DNode* runner = current->next;
+        
+        while (runner != head) {
+            DNode* nextRunner = runner->next;
+            
+            if (runner->data == current->data) {
+                if (runner == head) {
+                    head = runner->next;
+                }
+                runner->prev->next = runner->next;
+                runner->next->prev = runner->prev;
+                delete runner;
+            }
+            
+            runner = nextRunner;
+        }
+        
+        current = current->next;
+    } while (current->next != head);
+}
+
+bool removeKthNode(int k){
+    if (head == NULL || k <= 0) return false;
+    
+    int count = countNodes();
+    
+    if (k > count) return false;
+    
+    if (k == 1) {
+        removeAtHead();
+        return true;
+    }
+    
+    DNode* current = head;
+    for (int i = 1; i < k; i++) {
+        current = current->next;
+    }
+    
+    if (current == head) {
+        removeAtHead();
+    } else {
+        current->prev->next = current->next;
+        current->next->prev = current->prev;
+        delete current;
+    }
+    
+    return true;
+}
+
+
+// 1) Reverse the circular doubly linked list
+
+void reverse(){
+    if (head == NULL) return;
+    
+    DNode* current = head;
+    DNode* temp = NULL;
+    DNode* tail = head->prev;
+    
+    do {
+        temp = current->prev;
+        current->prev = current->next;
+        current->next = temp;
+        current = current->prev;
+    } while (current != head);
+    
+    head = tail;
+}
+
+// 2) Split the list into two halves
+
+CDLinkedList* splitIntoTwo(){
+    if (head == NULL || head->next == head) return NULL;
+    
+    DNode* slow = head;
+    DNode* fast = head;
+    
+    do {
+        fast = fast->next;
+        if (fast->next != head) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+    } while (fast->next != head && fast->next->next != head);
+    
+    CDLinkedList* secondHalf = new CDLinkedList();
+    secondHalf->head = slow->next;
+    
+    DNode* tail1 = slow;
+    DNode* tail2 = head->prev;
+    
+    tail1->next = head;
+    head->prev = tail1;
+    
+    secondHalf->head->prev = tail2;
+    tail2->next = secondHalf->head;
+    
+    return secondHalf;
+}
+
+// 3) Sort the circular doubly linked list (Bubble Sort)
+
+void sort(){
+    if (head == NULL || head->next == head) return;
+    
+    int totalNodes = countNodes();
+    bool swapped;
+    
+    for (int i = 0; i < totalNodes - 1; i++) {
+        DNode* current = head;
+        swapped = false;
+        
+        for (int j = 0; j < totalNodes - i - 1; j++) {
+            if (current->data > current->next->data) {
+                int temp = current->data;
+                current->data = current->next->data;
+                current->next->data = temp;
+                swapped = true;
+            }
+            current = current->next;
+        }
+        
+        if (!swapped) break;
+    }
+}
+
+
+
+
+// 4) Detect and count the total number of nodes in a loop (always true for CDLL, but common question)
+// Modified version: Find if list is properly circular
+bool isProperlyCircular(){
+    if (head == NULL) return true;
+    
+    DNode* current = head;
+    
+    do {
+        if (current->next == NULL || current->prev == NULL) {
+            return false;
+        }
+        
+        if (current->next->prev != current || current->prev->next != current) {
+            return false;
+        }
+        
+        current = current->next;
+    } while (current != head);
+    
+    return true;
+}
+
+// 5) Rotate the circular doubly linked list by k positions (clockwise)
+void rotate(int k){
+    if (head == NULL || head->next == head || k == 0) return;
+    
+    int totalNodes = countNodes();
+    k = k % totalNodes;
+    
+    if (k == 0) return;
+    
+    DNode* current = head;
+    
+    for (int i = 0; i < k; i++) {
+        current = current->next;
+    }
+    
+    head = current;
+}
+
+
+
+
+
+=================================================================================================================
+without do while loop
+void removeDuplicates(){
+    if (head == NULL) return;
+    
+    DNode* current = head;
+    DNode* startNode = head;
+    
+    while (true) {
+        DNode* runner = current->next;
+        
+        while (runner != startNode) {
+            DNode* nextRunner = runner->next;
+            
+            if (runner->data == current->data) {
+                if (runner == head) {
+                    head = runner->next;
+                }
+                runner->prev->next = runner->next;
+                runner->next->prev = runner->prev;
+                delete runner;
+            }
+            
+            runner = nextRunner;
+        }
+        
+        current = current->next;
+        if (current->next == startNode) break;
+    }
+}
+
+bool removeKthNode(int k){
+    if (head == NULL || k <= 0) return false;
+    
+    int count = countNodes();
+    
+    if (k > count) return false;
+    
+    if (k == 1) {
+        removeAtHead();
+        return true;
+    }
+    
+    DNode* current = head;
+    for (int i = 1; i < k; i++) {
+        current = current->next;
+    }
+    
+    if (current == head) {
+        removeAtHead();
+    } else {
+        current->prev->next = current->next;
+        current->next->prev = current->prev;
+        delete current;
+    }
+    
+    return true;
+}
+
+// 1) Reverse the circular doubly linked list
+void reverse(){
+    if (head == NULL) return;
+    
+    DNode* current = head;
+    DNode* temp = NULL;
+    DNode* tail = head->prev;
+    DNode* startNode = head;
+    
+    while (true) {
+        temp = current->prev;
+        current->prev = current->next;
+        current->next = temp;
+        current = current->prev;
+        
+        if (current == startNode) break;
+    }
+    
+    head = tail;
+}
+
+// 2) Split the list into two halves
+CDLinkedList* splitIntoTwo(){
+    if (head == NULL || head->next == head) return NULL;
+    
+    DNode* slow = head;
+    DNode* fast = head;
+    
+    while (true) {
+        fast = fast->next;
+        if (fast->next != head) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+        
+        if (fast->next == head || fast->next->next == head) break;
+    }
+    
+    CDLinkedList* secondHalf = new CDLinkedList();
+    secondHalf->head = slow->next;
+    
+    DNode* tail1 = slow;
+    DNode* tail2 = head->prev;
+    
+    tail1->next = head;
+    head->prev = tail1;
+    
+    secondHalf->head->prev = tail2;
+    tail2->next = secondHalf->head;
+    
+    return secondHalf;
+}
+
+// 3) Sort the circular doubly linked list (Bubble Sort)
+void sort(){
+    if (head == NULL || head->next == head) return;
+    
+    int totalNodes = countNodes();
+    bool swapped;
+    
+    for (int i = 0; i < totalNodes - 1; i++) {
+        DNode* current = head;
+        swapped = false;
+        
+        for (int j = 0; j < totalNodes - i - 1; j++) {
+            if (current->data > current->next->data) {
+                int temp = current->data;
+                current->data = current->next->data;
+                current->next->data = temp;
+                swapped = true;
+            }
+            current = current->next;
+        }
+        
+        if (!swapped) break;
+    }
+}
+
+// 4) Find if list is properly circular
+bool isProperlyCircular(){
+    if (head == NULL) return true;
+    
+    DNode* current = head;
+    
+    while (true) {
+        if (current->next == NULL || current->prev == NULL) {
+            return false;
+        }
+        
+        if (current->next->prev != current || current->prev->next != current) {
+            return false;
+        }
+        
+        current = current->next;
+        if (current == head) break;
+    }
+    
+    return true;
+}
+
+// 5) Rotate the circular doubly linked list by k positions (clockwise)
+void rotate(int k){
+    if (head == NULL || head->next == head || k == 0) return;
+    
+    int totalNodes = countNodes();
+    k = k % totalNodes;
+    
+    if (k == 0) return;
+    
+    DNode* current = head;
+    
+    for (int i = 0; i < k; i++) {
+        current = current->next;
+    }
+    
+    head = current;
+}
+
+
+=================================================================
+void merge(CDLinkedList& list1, CDLinkedList& list2){
+    DNode* head1 = list1.head;
+    DNode* head2 = list2.head;
+
+    if (head1 == NULL && head2 == NULL){
+        head = NULL;
+        return;
+    }
+    if (head1 == NULL){
+        head = head2;
+        list2.head = NULL;
+        return;
+    }
+    if (head2 == NULL){
+        head = head1;
+        list1.head = NULL;
+        return;
+    }
+
+    DNode* tail1 = head1->prev;
+    DNode* tail2 = head2->prev;
+    tail1->next = NULL;
+    head1->prev = NULL;
+    tail2->next = NULL;
+    head2->prev = NULL;
+    
+    // Now merge the two sorted linear doubly linked lists
+    DNode* mergedHead = NULL;
+    DNode* mergedTail = NULL;
+    
+    DNode* current1 = head1;
+    DNode* current2 = head2;
+    
+    // Determine the head of merged list
+    if (current1->data <= current2->data){
+        mergedHead = current1;
+        mergedTail = current1;
+        current1 = current1->next;
+    } else {
+        mergedHead = current2;
+        mergedTail = current2;
+        current2 = current2->next;
+    }
+    
+    mergedHead->prev = NULL;
+    
+    // Merge remaining nodes
+    while (current1 != NULL && current2 != NULL){
+        if (current1->data <= current2->data){
+            mergedTail->next = current1;
+            current1->prev = mergedTail;
+            mergedTail = current1;
+            current1 = current1->next;
+        } else {
+            mergedTail->next = current2;
+            current2->prev = mergedTail;
+            mergedTail = current2;
+            current2 = current2->next;
+        }
+    }
+    
+    // Attach remaining nodes from list1
+    while (current1 != NULL){
+        mergedTail->next = current1;
+        current1->prev = mergedTail;
+        mergedTail = current1;
+        current1 = current1->next;
+    }
+    
+    // Attach remaining nodes from list2
+    while (current2 != NULL){
+        mergedTail->next = current2;
+        current2->prev = mergedTail;
+        mergedTail = current2;
+        current2 = current2->next;
+    }
+    
+    // Convert back to circular doubly linked list
+    mergedTail->next = mergedHead;
+    mergedHead->prev = mergedTail;
+    
+    // Set the head of current list (list3)
+    head = mergedHead;
+    
+    // Make list1 and list2 empty
+    list1.head = NULL;
+    list2.head = NULL;
+}
