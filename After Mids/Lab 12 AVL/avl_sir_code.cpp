@@ -14,14 +14,17 @@ struct AVLNode{
 		this->height = 0;
 	}
 };
+
 int max(const int a, const int b){
 	if (a < b)	return b;
 	return a;
 }
+
 class BST{
 	AVLNode *root;
 public:
 	BST(){	root = NULL;	}
+
 	AVLNode* leftRotation(AVLNode* temp){
 		AVLNode* temp_right = temp->right;
 		temp->right	= temp_right->left;
@@ -31,6 +34,7 @@ public:
 		temp->height = max(getHeight(temp->left), getHeight(temp->right)) + 1;
 		return temp;
 	}
+
 	AVLNode* rightRotation(AVLNode* temp){
 		AVLNode* temp_left = temp->left;
 		temp->left	= temp_left->right;
@@ -72,6 +76,7 @@ public:
 			temp = doLeftRotation(temp);
 		return temp;		
 	}
+
 	AVLNode* insert(int d, AVLNode *temp){	
 		if (temp==NULL)	return new AVLNode(d);
 		if (temp->data>d) 		temp->left = insert(d, temp->left);
@@ -80,9 +85,11 @@ public:
 		temp->height = max(getHeight(temp->left), getHeight(temp->right)) + 1;
 		return temp;	
 	}
+
 	void insert(int d){	
 		root = insert(d, root);
 	}
+	
 	AVLNode* findLeftMost(AVLNode *t){
 		if (t->left == NULL)	return t;
 		return findLeftMost(t->left);
@@ -147,7 +154,7 @@ public:
 			removeNodes(t->right);
 			delete t;
 		}
-	}
+	} 
 	~BST(){
 		removeNodes(root);
 	}
